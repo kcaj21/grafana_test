@@ -1,0 +1,44 @@
+version: '3'
+services:
+  loki:
+    image: docker.io/grafana/loki
+    ports:
+      - "3100:3100"
+    networks:
+      default:
+    # command: -config.file=/etc/loki/local-config.yaml
+  prometheus:
+    image: docker.io/prom/prometheus
+    command:
+      - --web.enable-remote-write-receiver
+      - --config.file=/etc/prometheus/prometheus.yml
+    ports:
+      - "9090:9090"
+    networks:
+      default:
+  grafana:
+    image: docker.io/grafana/grafana
+    ports:
+      - "3000:3000"
+    environment:
+      - GF_AUTH_ANONYMOUS_ENABLED=true
+      - GF_AUTH_ANONYMOUS_ORG_ROLE=Viewer
+    networks:
+      default:
+    depends_on:
+      - loki
+  alloy:
+    image: docker.io/grafana/alloy
+    ports:
+      - 12345:12345
+      - 4318:4318
+    volumes:
+      - ./config.alloy:/etc/alloy/config.alloy
+      - ../SPLICE/splice-api/app/logs:/var/log
+    networks:
+      default:
+    command: run --server.http.listen-addr=0.0.0.0:12345 --stability.level=experimental  --storage.path=/var/lib/alloy/data /etc/alloy/config.alloy
+    depends_on:
+      - loki
+networks:
+  default:
