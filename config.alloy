@@ -8,12 +8,21 @@
     forward_to = [loki.process.filter_logs.receiver]
     tail_from_end = false
   }
+  
 
     loki.process "filter_logs" {
-    stage.drop {
-        source = ""
-        expression  = ".*Connection closed by authenticating user root"
-        drop_counter_reason = "noisy"
+      stage.logfmt {
+        mapping = {
+          "extracted_endpoint" = "endpoint",
+          "extracted_platform" = "platform",
+        }
+      }
+
+      stage.labels {
+        values = {
+          "endpoint" = "extracted_endpoint",
+          "platform" = "extracted_platform",
+        }
       }
     forward_to = [loki.write.grafana_loki.receiver]
     }
@@ -26,5 +35,8 @@
       // username = "admin"
       // password = "admin"
       //}
+    }
+    external_labels = {
+      job = "api",
     }
   }

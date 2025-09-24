@@ -34,7 +34,7 @@ services:
       - 4318:4318
     volumes:
       - ./config.alloy:/etc/alloy/config.alloy
-      - ../SPLICE/splice-api/app/logs:/var/log
+      - /nfs/home/users/ajack/work/logs:/var/log
     networks:
       default:
     command: run --server.http.listen-addr=0.0.0.0:12345 --stability.level=experimental  --storage.path=/var/lib/alloy/data /etc/alloy/config.alloy
