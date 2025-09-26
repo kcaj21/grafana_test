@@ -8,19 +8,32 @@
     forward_to = [loki.process.filter_logs.receiver]
     tail_from_end = false
   }
-  
 
     loki.process "filter_logs" {
-      stage.logfmt {
-        mapping = {
-          "extracted_endpoint" = "endpoint",
-          "extracted_platform" = "platform",
+      stage.json {
+        expressions  = {
+          "timestamp" = "",
+          "level" = "",
+          "logger" = "",
+          "message" = "",
+          "method" = "",
+          "endpoint" = "",
+          "client" = "",
+          "status_code" = "",
+          "platform" = "",
         }
       }
 
       stage.labels {
         values = {
+          "timestamp" = "extracted_timestamp",
+          "level" = "extracted_level",
+          "logger" = "extracted_logger",
+          "message" = "extracted_message",
+          "method" = "extracted_method",
           "endpoint" = "extracted_endpoint",
+          "client" = "extracted_client",
+          "status_code" = "extracted_status_code",
           "platform" = "extracted_platform",
         }
       }
