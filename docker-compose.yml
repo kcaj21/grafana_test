@@ -5,8 +5,7 @@ services:
     ports:
       - "3100:3100"
     networks:
-      default:
-    # command: -config.file=/etc/loki/local-config.yaml
+      grafana:
   prometheus:
     image: docker.io/prom/prometheus
     command:
@@ -15,7 +14,7 @@ services:
     ports:
       - "9090:9090"
     networks:
-      default:
+      grafana:
   grafana:
     image: docker.io/grafana/grafana
     ports:
@@ -24,7 +23,7 @@ services:
       - GF_AUTH_ANONYMOUS_ENABLED=true
       - GF_AUTH_ANONYMOUS_ORG_ROLE=Viewer
     networks:
-      default:
+      grafana:
     depends_on:
       - loki
   alloy:
@@ -36,9 +35,9 @@ services:
       - ./config.alloy:/etc/alloy/config.alloy
       - /nfs/home/users/ajack/work/logs:/var/log
     networks:
-      default:
+      grafana:
     command: run --server.http.listen-addr=0.0.0.0:12345 --stability.level=experimental  --storage.path=/var/lib/alloy/data /etc/alloy/config.alloy
     depends_on:
       - loki
 networks:
-  default:
+  grafana:
